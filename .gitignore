@@ -1,6 +1,5 @@
 # Ignore build artifacts
 /build/
-/bin/
 
 # Ignore dependency directories
 /node_modules/
