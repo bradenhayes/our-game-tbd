@@ -28,3 +28,15 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2_image-2.6.3/x86_64-w64-ming
                ${CMAKE_CURRENT_BINARY_DIR}/SDL2_image.dll
                COPYONLY
 )
+# Copy SDL2.dll to the build folder during configuration
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2-2.26.5/x86_64-w64-mingw32/bin/SDL2.dll
+               ${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2-2.26.5/x86_64-w64-mingw32/bin/SDL2.dll
+               COPYONLY
+)
+
+# Copy libSDL2_image.dll to the build folder during configuration
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2_image-2.6.3/x86_64-w64-mingw32/bin/SDL2_image.dll
+               ${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2_image-2.6.3/x86_64-w64-mingw32/bin/SDL2_image.dll
+               COPYONLY
+)
+
