@@ -1,5 +1,6 @@
 # Ignore build artifacts
 /build/
+/bin/
 
 # Ignore dependency directories
 /node_modules/
@@ -14,7 +15,6 @@
 # Ignore compiled code and object files
 *.o
 *.out
-*.dll
 *.exe
 
 # Ignore system files and temporary files
