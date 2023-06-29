@@ -15,7 +15,6 @@
 # Ignore compiled code and object files
 *.o
 *.out
-*.dll
 *.exe
 
 # Ignore system files and temporary files

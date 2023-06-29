@@ -28,3 +28,4 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2_image-2.6.3/x86_64-w64-ming
                ${CMAKE_CURRENT_BINARY_DIR}/SDL2_image.dll
                COPYONLY
 )
+
