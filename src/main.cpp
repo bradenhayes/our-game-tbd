@@ -2,6 +2,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <windows.h>
+#include <vector>
+#include <string>
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
@@ -12,8 +14,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         "Rat Mover 2023",                  // window title
         SDL_WINDOWPOS_UNDEFINED,           // initial x position
         SDL_WINDOWPOS_UNDEFINED,           // initial y position
-        640,                               // width, in pixels
-        480,                               // height, in pixels
+        800,                               // width, in pixels
+        600,                               // height, in pixels
         SDL_WINDOW_OPENGL                  // flags - see below
     );
 
@@ -27,53 +29,95 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     // Create a renderer
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-    // Load the sprite
-    const char* imagePath = "../images/rat.png";
-    SDL_Surface* surface = IMG_Load(imagePath);
-    if (surface == nullptr) {
+
+     IMG_Init(IMG_INIT_PNG);
+
+    //MESSING WITH SPRITE ANIMATIONS
+
+    // Constants for animation
+    const int FRAME_COUNT = 6;
+    const int FRAME_DELAY = 100;
+
+    // Load the sprite (   IDLE   )
+    SDL_Surface* idleSurface = IMG_Load("../images/Biker_idle1.png");
+    if (idleSurface == nullptr) {
         // Error handling
         printf("Failed to load image: %s\n", IMG_GetError());
         return 1;
     }
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_FreeSurface(surface);
+    SDL_Texture* idleTexture = SDL_CreateTextureFromSurface(renderer, idleSurface);
+    SDL_FreeSurface(idleSurface);
 
-    // Create a source rectangle for the sprite
-    SDL_Rect srcRect;
-    SDL_QueryTexture(texture, NULL, NULL, &srcRect.w, &srcRect.h);
-    srcRect.x = 0;
-    srcRect.y = 0;
 
-    // Create a destination rectangle for the sprite
-    SDL_Rect dstRect = { 100, 100, srcRect.w, srcRect.h };
+    //Load running animation frames
+    std::vector<SDL_Surface*> runningFrames;
+    for (int i = 1; i <= FRAME_COUNT; ++i) {
+        std::string frameFilename = "../images/Biker_run" + std::to_string(i) + ".png";
+        runningFrames.push_back(IMG_Load(frameFilename.c_str()));
+    }
+
+
+    // Set up animation variables
+    std::vector<SDL_Texture*> runningTextures;
+    for (SDL_Surface* surface : runningFrames) {
+        runningTextures.push_back(SDL_CreateTextureFromSurface(renderer, surface));
+    }
+
+    // Set up character rect
+    SDL_Rect characterRect = { 0, 0, 30, 35 };
+
 
     SDL_Event event;
     bool quit = false;
+    bool isRunning = false;  // Flag to check if running animation is playing
+    int currentFrame = 0;
+    Uint32 frameStartTime = SDL_GetTicks();  
 
     while (!quit) {
-        while (SDL_PollEvent(&event)) {
+        while (SDL_PollEvent(&event) != 0) {
             if (event.type == SDL_QUIT) {
                 quit = true;
-            } else if (event.type == SDL_KEYDOWN) {
-                switch (event.key.keysym.sym) {
-                    case SDLK_LEFT: dstRect.x -= 5; break;
-                    case SDLK_RIGHT: dstRect.x += 5; break;
-                    case SDLK_UP: dstRect.y -= 5; break;
-                    case SDLK_DOWN: dstRect.y += 5; break;
+             }
+            else if (event.type == SDL_KEYDOWN) {
+                if (event.key.keysym.sym == SDLK_RIGHT) {
+                    isRunning = true;
+                    frameStartTime = SDL_GetTicks();  // Reset frame start time
                 }
             }
         }
 
-        // Render the sprite
+       // Clear the renderer
         SDL_RenderClear(renderer);
-        SDL_RenderCopy(renderer, texture, &srcRect, &dstRect);
+
+        // Update the animation frame
+        SDL_Texture* currentTexture = idleTexture;
+        if (isRunning) {
+            Uint32 currentTime = SDL_GetTicks();
+            if (currentTime - frameStartTime >= FRAME_DELAY) {
+                currentFrame = (currentFrame + 1) % runningTextures.size();
+                frameStartTime = currentTime;
+            }
+            currentTexture = runningTextures[currentFrame];
+        }
+
+        // Render the current frame
+        SDL_RenderCopy(renderer, currentTexture, NULL, &characterRect);
+
+        // Present the renderer
         SDL_RenderPresent(renderer);
     }
 
-    // Close and destroy the window
+   // Free resources and quit SDL
+    SDL_DestroyTexture(idleTexture);
+    for (SDL_Texture* texture : runningTextures) {
+        SDL_DestroyTexture(texture);
+    }
+    SDL_FreeSurface(idleSurface);
+    for (SDL_Surface* surface : runningFrames) {
+        SDL_FreeSurface(surface);
+    }
+    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-
-    // Clean up
+    IMG_Quit();
     SDL_Quit();
-    return 0;
 }
