@@ -1,7 +1,8 @@
-// GroundTile.cpp
-#include "groundTile.h"
+// BackgroundTile.cpp
+#include "BackgroundTile.h"
 
-GroundTile::GroundTile(SDL_Renderer *renderer, const std::string &imagePath) {
+BackgroundTile::BackgroundTile(SDL_Renderer *renderer,
+                               const std::string &imagePath) {
   SDL_Surface *surface = IMG_Load(imagePath.c_str());
   if (surface == nullptr) {
     // Error handling
@@ -16,7 +17,7 @@ GroundTile::GroundTile(SDL_Renderer *renderer, const std::string &imagePath) {
   );
   SDL_FreeSurface(surface);
 }
-void GroundTile::draw(SDL_Renderer *renderer, int x, int y) {
+void BackgroundTile::draw(SDL_Renderer *renderer, int x, int y) {
   SDL_Rect dstRect = {x, y, TILE_SIZE, TILE_SIZE};
   SDL_RenderCopy(renderer, texture.get(), nullptr, &dstRect);
 }
