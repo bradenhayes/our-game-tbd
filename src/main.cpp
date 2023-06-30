@@ -29,6 +29,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     while (!quit) {
         while (SDL_PollEvent(&event) != 0) {
+
             if (event.type == SDL_QUIT) {
                 quit = true;
             }
@@ -39,6 +40,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                 if (event.key.keysym.sym == SDLK_a) {
                     character.startRunningLeft();
                 }
+                if (event.key.keysym.sym == SDLK_SPACE) {
+                    character.jump();
+        }
             }
             else if (event.type == SDL_KEYUP) {
                 if (event.key.keysym.sym == SDLK_d) {
