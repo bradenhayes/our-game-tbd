@@ -9,7 +9,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2-2.26.5/x86_64-w64-ming
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2_image-2.6.3/x86_64-w64-mingw32/include)
 
 # Add the executable target and its source files
-add_executable(my_project ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+add_executable(my_project ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/character.cpp)
+
+target_include_directories(my_project PUBLIC ${${CMAKE_CURRENT_SOURCE_DIR}/src/character.h})
 
 # Link the target executable against SDL2 and SDL2_image
 target_link_libraries(my_project
