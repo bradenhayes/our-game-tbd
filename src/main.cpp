@@ -82,59 +82,68 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                       renderer, "../images/IndustrialTile_02.png"));
   }
 
-  Character character(renderer);
-  SDL_Event event;
-  bool quit = false;
 
-    Uint32 frameStartTime = SDL_GetTicks();
+  Character character(renderer); // new instance of character
+  SDL_Event event;  // new event handler
+  bool quit = false;   
+
+    // Animation initialization
+    Uint32 frameStartTime = SDL_GetTicks();  
     Uint32 lastFrameTime = frameStartTime;
 
+
+
+    // MAIN GAME LOGIC
     while (!quit) {
         while (SDL_PollEvent(&event) != 0) {
 
             if (event.type == SDL_QUIT) {
                 quit = true;
             }
-            else if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym == SDLK_d) {
+            else if (event.type == SDL_KEYDOWN) {   //When key is currently pressed down. all following code only runs during keydown
+                if (event.key.keysym.sym == SDLK_d) { //Run right direction animation and functionality when 'd' press
                     character.startRunning();
                 }
-                if (event.key.keysym.sym == SDLK_a) {
+                if (event.key.keysym.sym == SDLK_a) {  //Run left direction animation and functionality when 'a' press
                     character.startRunningLeft();
                 }
-                if (event.key.keysym.sym == SDLK_SPACE) {
+                if (event.key.keysym.sym == SDLK_SPACE) {  //Run jump direction animation and functionality when 'space' press
                     character.jump();
         }
             }
-            else if (event.type == SDL_KEYUP) {
-                if (event.key.keysym.sym == SDLK_d) {
+            else if (event.type == SDL_KEYUP) { //When key is not currrently pressed down
+                if (event.key.keysym.sym == SDLK_d) {  //'d' not pressed, stop running right
                     character.stopRunning();
                 }
-                else if (event.key.keysym.sym == SDLK_a) {
+                else if (event.key.keysym.sym == SDLK_a) { //'a' not pressed, stop running left
                     character.stopRunningLeft();
                 }
             }
         }
 
-        character.update();
-        // Clear the renderer
-        SDL_RenderClear(renderer);
-
+        // Do not alter the ORDER pf following 'update', 'render' and 'draw'.
+        //Current order ensures character is visible and located on the top layer of the application in front of the background
+        character.update();   //update frames
+       
+        SDL_RenderClear(renderer);  // Clear the renderer
         
+        background.render(renderer); // Render the background
         
-        // Render the background
-        background.render(renderer);
+        level.draw(renderer);   // Draw the level
 
-        // Draw the level
-        level.draw(renderer);
-        character.render();
+        character.render();   // render character 
 
-        SDL_RenderPresent(renderer);
+        SDL_RenderPresent(renderer); //presents the rendered content to the screen. 
 
-        Uint32 currentFrameTime = SDL_GetTicks();
-        Uint32 frameTime = currentFrameTime - lastFrameTime;
-        lastFrameTime = currentFrameTime;
-        int adjustedFrameDelay = FRAME_DELAY - frameTime;
+
+
+        //Optimize the animations by introducing frame times and delay to keep a steady frame rate.
+        Uint32 currentFrameTime = SDL_GetTicks(); //retrieves the current time in milliseconds
+        Uint32 frameTime = currentFrameTime - lastFrameTime; // duration between the current frame and the previous frame 
+        lastFrameTime = currentFrameTime;  //timestamp of current time
+        int adjustedFrameDelay = FRAME_DELAY - frameTime;  //calculates the adjusted frame delay by subtracting the frameTime from the desired FRAME_DELAY. The FRAME_DELAY represents the desired time delay between frames. 
+        //The adjustedFrameDelay variable stores the remaining time that needs to be delayed before rendering the next frame.
+
 
         // Delay if the frame was rendered too quickly
         if (adjustedFrameDelay > 0) {
@@ -142,6 +151,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         }
     }
 
+
+    // EXIT AND FREE MEMORY
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     IMG_Quit();
