@@ -10,7 +10,7 @@ const int FRAME_DELAY = 1000/55;
 const int IDLE_FRAME_COUNT = 4;
 const int IDLE_FRAME_DELAY = 1000/25;
 const int JUMP_FRAME_COUNT = 4;
-const int JUMP_FRAME_DELAY = 1000/25;
+const int JUMP_FRAME_DELAY = 1000/60;
 
 class Character {
 public:
@@ -28,6 +28,8 @@ private:
     SDL_Renderer* renderer;
     SDL_Surface* idleSurface;
     SDL_Texture* idleTexture;
+    SDL_Surface* idleLeftSurface;
+    SDL_Texture* idleLeftTexture;
     SDL_Surface* runSpriteSurface;
     SDL_Texture* runSpriteTexture;
     SDL_Surface* runLeftSpriteSurface;
@@ -45,9 +47,14 @@ private:
     bool isIdle;
     bool isRunningLeft;
     bool isJumping;        // Flag indicating if the character is currently jumping
-    int startPosY;  // Starting position of the character
-    int posY;       // Current position of the character
-    int velY;       // Vertical velocity of the character
+    int jumpHeight;
+    int jumpSpeed;
+    int gravity;
+    int groundHeight;
+
+
+
+    bool isIdleLeft;
 };
 
 #endif // CHARACTER_H

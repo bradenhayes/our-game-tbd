@@ -15,6 +15,10 @@ Character::Character(SDL_Renderer* renderer) : renderer(renderer) {
     idleTexture = SDL_CreateTextureFromSurface(renderer, idleSurface);
     SDL_FreeSurface(idleSurface);
 
+    idleLeftSurface = IMG_Load("../images/Biker_idleLeft.png");
+    idleLeftTexture = SDL_CreateTextureFromSurface(renderer, idleLeftSurface);
+    SDL_FreeSurface(idleLeftSurface);
+
     runSpriteSurface = IMG_Load("../images/Biker_run.png");
     runSpriteTexture = SDL_CreateTextureFromSurface(renderer, runSpriteSurface);
 
@@ -33,9 +37,16 @@ Character::Character(SDL_Renderer* renderer) : renderer(renderer) {
     
     //Initial character x y size and location
     characterRect.x = 0;
-    characterRect.y = 300;
+    characterRect.y = 500;
     characterRect.w = frameRunWidth;
     characterRect.h = frameRunHeight;
+
+
+    //Jumping Variables
+    jumpHeight = characterRect.y + 50;
+    jumpSpeed = 30;
+    gravity = -2;
+    groundHeight = 500;
 
 
     //Setting up animation frames
@@ -49,6 +60,7 @@ Character::Character(SDL_Renderer* renderer) : renderer(renderer) {
     //Animation Flags
     isRunning = false;
     isIdle = true;
+    isIdleLeft = false;
     isRunningLeft = false;
     isJumping = false;
 
@@ -59,6 +71,7 @@ void Character::startRunning() {
     frameStartTime = SDL_GetTicks();
     isRunning = true;
     isIdle = false;isJumping = false;
+    isIdleLeft = false;
 }
 //method triggered when character is no longer moving right (no keypress on right movement detected)
 void Character::stopRunning() {
@@ -72,12 +85,14 @@ void Character::startRunningLeft() {
     frameStartTime = SDL_GetTicks();
     isRunningLeft = true;
     isIdle = false;isJumping = false;
+    isIdleLeft = false;
 }
 
 void Character::stopRunningLeft() {
     currentFrameIndex = 0;
     isRunningLeft = false;
     isIdle = true;isJumping = false;
+    isIdleLeft = true;
 }
 
 //Method for player to jump (space bar)
@@ -105,7 +120,7 @@ void Character::update() {
         characterRect.x -=5;
     }
     //NO KEYPRESS
-    if (isIdle && currentTime - frameStartTime >= IDLE_FRAME_DELAY) {
+    if ((isIdle || isIdleLeft) && currentTime - frameStartTime >= IDLE_FRAME_DELAY) {
         currentFrameIndex = (currentFrameIndex + 1) % IDLE_FRAME_COUNT;
         frameStartTime = currentTime;
     }
@@ -114,11 +129,25 @@ void Character::update() {
     if (isJumping && currentTime - frameStartTime >= JUMP_FRAME_DELAY) {
         currentFrameIndex = (currentFrameIndex + 1) % JUMP_FRAME_COUNT;
         frameStartTime = currentTime;
-        characterRect.y -=3;
-        
 
+        characterRect.y -= jumpSpeed;
+        jumpHeight -= jumpSpeed;
+        jumpSpeed += gravity;
+
+        if (jumpHeight <= 0){
+            characterRect.y = groundHeight;
+            isJumping = false;
+            jumpHeight = 0;
+            jumpSpeed = 0;
+        }
+        characterRect.x +=5;
+        characterRect.x -=5;
         
     }
+
+
+    // GROUND COLLISION
+    // Check for collision between character and ground tile
 }
 
 
@@ -148,8 +177,8 @@ void Character::render() {
         SDL_RenderCopy(renderer, runLeftSpriteTexture, &sourceRect, &characterRect);
     }
 
-    // IDLE RENDER
-    else if (isIdle){
+    // IDLE RIGHT FACING RENDER
+    else if (isIdle && !isIdleLeft){
         SDL_Rect sourceRect;
         sourceRect.x = currentFrameIndex * frameRunWidth;
         sourceRect.y = 0;
@@ -157,6 +186,17 @@ void Character::render() {
         sourceRect.h = frameRunHeight;
 
         SDL_RenderCopy(renderer, idleTexture, &sourceRect, &characterRect);
+    }
+
+    // IDLE LEFT FACING RENDER
+    else if (isIdle && isIdleLeft){
+        SDL_Rect sourceRect;
+        sourceRect.x = currentFrameIndex * frameRunWidth;
+        sourceRect.y = 0;
+        sourceRect.w = frameRunWidth;
+        sourceRect.h = frameRunHeight;
+
+        SDL_RenderCopy(renderer, idleLeftTexture, &sourceRect, &characterRect);
     }
 
     // JUMP RENDER
