@@ -2,6 +2,7 @@
 #include "level/backgroundTile.h"
 #include "level/groundTile.h"
 #include "level/level.h"
+#include "character/character.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <cstdio>
@@ -10,7 +11,7 @@
 #include <windows.h>
 #include <vector>
 #include <string>
-#include "character.h"
+
 #ifdef _WIN32
 #include <direct.h>
 #define GETCWD _getcwd
