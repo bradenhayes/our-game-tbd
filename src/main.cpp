@@ -8,7 +8,9 @@
 #include <iostream>
 #include <memory>
 #include <windows.h>
-
+#include <vector>
+#include <string>
+#include "character.h"
 #ifdef _WIN32
 #include <direct.h>
 #define GETCWD _getcwd
@@ -79,28 +81,70 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                       renderer, "../images/IndustrialTile_02.png"));
   }
 
+  Character character(renderer);
   SDL_Event event;
   bool quit = false;
 
-  while (!quit) {
-    while (SDL_PollEvent(&event)) {
-      if (event.type == SDL_QUIT) {
-        quit = true;
-      }
+    Uint32 frameStartTime = SDL_GetTicks();
+    Uint32 lastFrameTime = frameStartTime;
+
+    while (!quit) {
+        while (SDL_PollEvent(&event) != 0) {
+
+            if (event.type == SDL_QUIT) {
+                quit = true;
+            }
+            else if (event.type == SDL_KEYDOWN) {
+                if (event.key.keysym.sym == SDLK_d) {
+                    character.startRunning();
+                }
+                if (event.key.keysym.sym == SDLK_a) {
+                    character.startRunningLeft();
+                }
+                if (event.key.keysym.sym == SDLK_SPACE) {
+                    character.jump();
+        }
+            }
+            else if (event.type == SDL_KEYUP) {
+                if (event.key.keysym.sym == SDLK_d) {
+                    character.stopRunning();
+                }
+                else if (event.key.keysym.sym == SDLK_a) {
+                    character.stopRunningLeft();
+                }
+            }
+        }
+
+        character.update();
+        // Clear the renderer
+        SDL_RenderClear(renderer);
+
+        
+        
+        // Render the background
+        background.render(renderer);
+
+        // Draw the level
+        level.draw(renderer);
+        character.render();
+
+        SDL_RenderPresent(renderer);
+
+        Uint32 currentFrameTime = SDL_GetTicks();
+        Uint32 frameTime = currentFrameTime - lastFrameTime;
+        lastFrameTime = currentFrameTime;
+        int adjustedFrameDelay = FRAME_DELAY - frameTime;
+
+        // Delay if the frame was rendered too quickly
+        if (adjustedFrameDelay > 0) {
+            SDL_Delay(adjustedFrameDelay);
+        }
     }
 
-    SDL_RenderClear(renderer);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    IMG_Quit();
+    SDL_Quit();
 
-    // Render the background
-    background.render(renderer);
-
-    // Draw the level
-    level.draw(renderer);
-
-    SDL_RenderPresent(renderer);
-  }
-
-  SDL_DestroyWindow(window);
-  SDL_Quit();
-  return 0;
+    return 0;
 }
