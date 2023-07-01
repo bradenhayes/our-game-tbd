@@ -81,7 +81,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                       renderer, "../images/IndustrialTile_02.png"));
   }
 
-
+  Character character(renderer);
   SDL_Event event;
   bool quit = false;
 
@@ -119,6 +119,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         // Clear the renderer
         SDL_RenderClear(renderer);
 
+        
+        
+        // Render the background
+        background.render(renderer);
+
+        // Draw the level
+        level.draw(renderer);
         character.render();
 
         SDL_RenderPresent(renderer);
