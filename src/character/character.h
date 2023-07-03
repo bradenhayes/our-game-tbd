@@ -10,7 +10,7 @@ const int FRAME_DELAY = 1000/55;
 const int IDLE_FRAME_COUNT = 4;
 const int IDLE_FRAME_DELAY = 1000/25;
 const int JUMP_FRAME_COUNT = 4;
-const int JUMP_FRAME_DELAY = 1000/60;
+const int JUMP_FRAME_DELAY = 1000/50;
 
 class Character {
 public:

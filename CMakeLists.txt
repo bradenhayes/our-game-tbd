@@ -15,8 +15,8 @@ add_executable(my_project
     ${CMAKE_CURRENT_SOURCE_DIR}/src/level/groundTile.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/level/backgroundTile.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/background/background.cpp
-    
- ${CMAKE_CURRENT_SOURCE_DIR}/src//character/character.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/NPC/NPC1.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src//character/character.cpp)
 
 
 # Link the target executable against SDL2 and SDL2_image

@@ -3,6 +3,7 @@
 #include "level/groundTile.h"
 #include "level/level.h"
 #include "character/character.h"
+#include "NPC/NPC.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <cstdio>
@@ -84,6 +85,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 
   Character character(renderer); // new instance of character
+
+  NPC1 lester(renderer);
   SDL_Event event;  // new event handler
   bool quit = false;   
 
@@ -124,7 +127,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         // Do not alter the ORDER pf following 'update', 'render' and 'draw'.
         //Current order ensures character is visible and located on the top layer of the application in front of the background
         character.update();   //update frames
-       
+        lester.update();
         SDL_RenderClear(renderer);  // Clear the renderer
         
         background.render(renderer); // Render the background
@@ -132,7 +135,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         level.draw(renderer);   // Draw the level
 
         character.render();   // render character 
-
+        lester.render(renderer);
         SDL_RenderPresent(renderer); //presents the rendered content to the screen. 
 
 

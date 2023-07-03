@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <vector>
 #include <string>
+#include <iostream>
 
 
 
@@ -44,7 +45,7 @@ Character::Character(SDL_Renderer* renderer) : renderer(renderer) {
 
     //Jumping Variables
     jumpHeight = characterRect.y + 50;
-    jumpSpeed = 30;
+    jumpSpeed = 20;
     gravity = -2;
     groundHeight = 500;
 
@@ -100,6 +101,7 @@ void Character::jump() {
     frameStartTime = SDL_GetTicks();
     isJumping = true;
     isIdle = false;
+    isIdleLeft = false;
 }
 
 //updating the character's animation based on the elapsed time and the animation flags. 
@@ -133,15 +135,14 @@ void Character::update() {
         characterRect.y -= jumpSpeed;
         jumpHeight -= jumpSpeed;
         jumpSpeed += gravity;
-
-        if (jumpHeight <= 0){
+        if (characterRect.y >= groundHeight){
             characterRect.y = groundHeight;
             isJumping = false;
-            jumpHeight = 0;
-            jumpSpeed = 0;
+            isIdle = true;
+            jumpHeight = characterRect.y + 50;
+            jumpSpeed = 20;
         }
-        characterRect.x +=5;
-        characterRect.x -=5;
+
         
     }
 
